@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.squareup.picasso.Picasso
+import java.net.SocketTimeoutException
 
 class CatsView @JvmOverloads constructor(
     context: Context,
@@ -36,8 +37,12 @@ class CatsView @JvmOverloads constructor(
         }
     }
 
-    override fun showError(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    override fun showError(message: Exception) {
+        val text = when (message) {
+            is SocketTimeoutException -> context.getString(R.string.error_timeout)
+            else -> message.message ?: context.getString(R.string.error_unknown)
+        }
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
 }
@@ -45,5 +50,5 @@ class CatsView @JvmOverloads constructor(
 interface ICatsView {
 
     fun populate(catPresentation: CatPresentation)
-    fun showError(message: String)
+    fun showError(message: Exception)
 }

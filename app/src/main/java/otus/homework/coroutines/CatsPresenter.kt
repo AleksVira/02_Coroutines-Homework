@@ -1,6 +1,7 @@
 package otus.homework.coroutines
 
 import java.net.SocketTimeoutException
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,11 +35,13 @@ class CatsPresenter(
                     imageUrl = imageUrl ?: ""
                 )
                 _catsView?.populate(catPresentation)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: SocketTimeoutException) {
-                _catsView?.showError("Не удалось получить ответ от сервера")
+                _catsView?.showError(e)
             } catch (e: Exception) {
                 CrashMonitor.trackWarning()
-                _catsView?.showError(e.message ?: "Неизвестная ошибка")
+                _catsView?.showError(e)
             }
         }
     }
