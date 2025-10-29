@@ -23,7 +23,8 @@ class MainActivity : AppCompatActivity() {
                     @Suppress("UNCHECKED_CAST")
                     return CatsViewModel(
                         diContainer.catsService,
-                        diContainer.catsImageService
+                        diContainer.catsImageService,
+                        getString(R.string.error_timeout)
                     ) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.catsLiveData.observe(this) { result ->
             when (result) {
                 is Result.Success -> view.populate(result.data)
-                is Result.Error -> view.showError(result.exception.message ?: "Неизвестная ошибка")
+                is Result.Error -> view.showError(result.exception)
             }
         }
 
